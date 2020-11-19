@@ -31,7 +31,7 @@
                 </template>
             </v-list>
         </v-navigation-drawer>
-        <v-app-bar :clipped-left="clipped" fixed app>
+        <v-app-bar :clipped-left="clipped" fixed color="white" app>
             <v-btn icon @click.stop="miniVariant = !miniVariant">
                 <v-icon
                     >mdi-{{
