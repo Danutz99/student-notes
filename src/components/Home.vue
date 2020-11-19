@@ -1,9 +1,18 @@
 <template>
     <v-container fluid fill-height class="home" style="max-height: 100vh;">
         <v-layout justify-center align-center column pa-5>
-            <div class="display-4 font-weight-black white--text text-xs-center">USEFUL MANAGER</div>
-            <div class="display-4 font-weight-black white--text text-xs-center mb-3">FOR YOUR NOTES</div>
-            <div class="display-1 font-weight-bold white--text text-xs-center">Forget about the pen and the paper, use this app at it's best for your learning needs.</div>
+            <div class="display-4 font-weight-black white--text text-xs-center">
+                USEFUL MANAGER
+            </div>
+            <div
+                class="display-4 font-weight-black white--text text-xs-center mb-3"
+            >
+                FOR YOUR NOTES
+            </div>
+            <div class="display-1 font-weight-bold white--text text-xs-center">
+                Forget about the pen and the paper, use this app at it's best
+                for your learning needs.
+            </div>
         </v-layout>
     </v-container>
 </template>
