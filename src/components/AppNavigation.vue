@@ -27,7 +27,7 @@
                             </v-expansion-panel-content>
                         </v-expansion-panel>
                     </v-expansion-panels>
-                    <v-divider :key="`divider-${index}`"></v-divider>
+                    <!-- <v-divider :key="`divider-${index}`"></v-divider> -->
                 </template>
             </v-list>
         </v-navigation-drawer>
@@ -50,27 +50,33 @@
             <!-- <v-btn icon>
         <v-icon>mdi-menu</v-icon>
       </v-btn> -->
-            <v-btn flat class="hidden-sm-and-down">SIGN IN</v-btn>
-            <v-btn flat color="blue lighten-3" class="hidden-sm-and-down"
-                >JOIN</v-btn
+            <!-- <v-btn text class="hidden-sm-and-down">SIGN IN</v-btn> -->
+            <GoogleLogin
+                :params="params"
+                :onSuccess="onSuccess"
+                :onFailure="onFailure"
+                >Login</GoogleLogin
             >
+            <!-- <v-btn text color="blue lighten-3" class="hidden-sm-and-down"
+                >JOIN</v-btn
+            > -->
         </v-app-bar>
-        <v-toolbar app color="blue darken-4" dark>
-            <v-toolbar-side-icon
+        <!-- <v-toolbar app color="blue darken-4" dark> -->
+        <!-- <v-toolbar-side-icon
                 class="hidden-md-and-up"
                 @click="drawer = !drawer"
-            ></v-toolbar-side-icon>
-            <v-spacer class="hidden-md-and-up"></v-spacer>
+            ></v-toolbar-side-icon> -->
+        <!-- <v-spacer class="hidden-md-and-up"></v-spacer>
             <v-toolbar-title>{{ appTitle }}</v-toolbar-title>
-            <v-btn flat class="hidden-sm-and-down" icon>
+            <v-btn text class="hidden-sm-and-down" icon>
                 <v-icon>mdi-menu</v-icon>
             </v-btn>
-            <v-spacer class="hidden-sm-and-down"></v-spacer>
-            <v-btn flat class="hidden-sm-and-down">SIGN IN</v-btn>
+            <v-spacer class="hidden-sm-and-down"></v-spacer> -->
+        <!-- <v-btn text class="hidden-sm-and-down">SIGN IN</v-btn>
             <v-btn color="brown lighten-3" class="hidden-sm-and-down"
                 >JOIN</v-btn
-            >
-        </v-toolbar>
+            > -->
+        <!-- </v-toolbar> -->
         <v-footer :absolute="!fixed" app>
             <span
                 >Student Notes &copy; {{ new Date().getFullYear() }} All rights
@@ -81,6 +87,8 @@
 </template>
 
 <script>
+import GoogleLogin from 'vue-google-login';
+
 export default {
     name: 'AppNavigation',
     data() {
@@ -113,8 +121,26 @@ export default {
                     content: 'No recent viewed resources.'
                 },
                 { title: 'Uploads', icon: 'mdi-upload', content: 'No uploads.' }
-            ]
+            ],
+            params: {
+                client_id:
+                    '761938028069-n402gl1os21gh2ibre7sp858av4s02kf.apps.googleusercontent.com'
+            }
         };
+    },
+    methods: {
+        onSuccess(googleUser) {
+            console.log(googleUser);
+
+            // This only gets the user information: id, name, imageUrl and email
+            console.log(googleUser.getBasicProfile());
+        },
+        onFailure() {
+            console.log('failure....');
+        }
+    },
+    components: {
+        GoogleLogin
     }
 };
 </script>
