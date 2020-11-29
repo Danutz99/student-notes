@@ -10,6 +10,9 @@
             :clipped="clipped"
             permanent
         >
+            <template>
+                <UserProfile :user="googleUser" />
+            </template>
             <v-list>
                 <template>
                     <v-expansion-panels accordion focusable>
@@ -51,13 +54,20 @@
         <v-icon>mdi-menu</v-icon>
       </v-btn> -->
             <!-- <v-btn text class="hidden-sm-and-down">SIGN IN</v-btn> -->
-            <GoogleLogin
-                :params="params"
-                :renderParams="renderParams"
-                :onSuccess="onSuccess"
-                :onFailure="onFailure"
-                >Login</GoogleLogin
-            >
+            <template v-if="!loggedIn">
+                <GoogleLogin
+                    :params="params"
+                    :renderParams="renderParams"
+                    :onSuccess="onSuccess"
+                    :onFailure="onFailure"
+                    >Login</GoogleLogin
+                >
+            </template>
+            <template v-else>
+                <GoogleLogin :params="params" :logoutButton="true"
+                    >Logout</GoogleLogin
+                >
+            </template>
             <!-- <v-btn text color="blue lighten-3" class="hidden-sm-and-down"
                 >JOIN</v-btn
             > -->
@@ -89,6 +99,7 @@
 
 <script>
 import GoogleLogin from 'vue-google-login';
+import UserProfile from '../components/UserProfile.vue';
 
 export default {
     name: 'AppNavigation',
@@ -131,22 +142,33 @@ export default {
                 width: 250,
                 height: 50,
                 longtitle: true
-            }
+            },
+            loggedIn: false,
+            googleUser: {}
         };
     },
     methods: {
         onSuccess(googleUser) {
+            this.loggedIn = true;
+            this.googleUser = googleUser.getBasicProfile();
             console.log(googleUser);
-
             // This only gets the user information: id, name, imageUrl and email
             console.log(googleUser.getBasicProfile());
+            let profile = googleUser.getBasicProfile();
+            console.log('ID: ' + profile.getId());
+            console.log('Full Name: ' + profile.getName());
+            console.log('Given Name: ' + profile.getGivenName());
+            console.log('Family Name: ' + profile.getFamilyName());
+            console.log('Image URL: ' + profile.getImageUrl());
+            console.log('Email: ' + profile.getEmail());
         },
         onFailure() {
             console.log('failure....');
         }
     },
     components: {
-        GoogleLogin
+        GoogleLogin,
+        UserProfile
     }
 };
 </script>

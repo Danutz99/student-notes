@@ -116,7 +116,7 @@
 
 <script>
 export default {
-    name: 'HomePlans'
+    name: 'Resources'
 };
 </script>
 
