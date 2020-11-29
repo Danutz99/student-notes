@@ -1,50 +1,55 @@
 <template>
     <span>
-        <v-navigation-drawer
-            app
-            v-model="drawer"
-            class="white lighten-2"
-            dark
-            disable-resize-watcher
-            :mini-variant="miniVariant"
-            :clipped="clipped"
-            permanent
-        >
-            <template>
-                <UserProfile :user="googleUser" />
-            </template>
-            <v-list>
+        <template v-if="loggedIn">
+            <v-navigation-drawer
+                app
+                v-model="drawer"
+                class="white lighten-2"
+                dark
+                disable-resize-watcher
+                :mini-variant="miniVariant"
+                :clipped="clipped"
+                permanent
+            >
                 <template>
-                    <v-expansion-panels accordion focusable>
-                        <v-expansion-panel
-                            v-for="(item, index) in items"
-                            :key="index"
-                            :class="{ 'blue lighten-2': true }"
-                        >
-                            <v-expansion-panel-header>
-                                <v-icon>{{ item.icon }}</v-icon>
-                                {{ item.title }}
-                            </v-expansion-panel-header>
-                            <v-expansion-panel-content>
-                                {{ item.content }}
-                            </v-expansion-panel-content>
-                        </v-expansion-panel>
-                    </v-expansion-panels>
-                    <!-- <v-divider :key="`divider-${index}`"></v-divider> -->
+                    <UserProfile :user="googleUser" />
                 </template>
-            </v-list>
-        </v-navigation-drawer>
+                <v-list>
+                    <template>
+                        <v-expansion-panels accordion focusable>
+                            <v-expansion-panel
+                                v-for="(item, index) in items"
+                                :key="index"
+                                :class="{ 'blue lighten-2': true }"
+                            >
+                                <v-expansion-panel-header>
+                                    <v-icon>{{ item.icon }}</v-icon>
+                                    {{ item.title }}
+                                </v-expansion-panel-header>
+                                <v-expansion-panel-content>
+                                    {{ item.content }}
+                                </v-expansion-panel-content>
+                            </v-expansion-panel>
+                        </v-expansion-panels>
+                        <!-- <v-divider :key="`divider-${index}`"></v-divider> -->
+                    </template>
+                </v-list>
+            </v-navigation-drawer>
+        </template>
+
         <v-app-bar :clipped-left="clipped" fixed color="white" app>
-            <v-btn icon @click.stop="miniVariant = !miniVariant">
-                <v-icon
-                    >mdi-{{
-                        `chevron-${miniVariant ? 'right' : 'left'}`
-                    }}</v-icon
-                >
-            </v-btn>
-            <v-btn icon @click.stop="clipped = !clipped">
-                <v-icon>mdi-application</v-icon>
-            </v-btn>
+            <template v-if="loggedIn">
+                <v-btn icon @click.stop="miniVariant = !miniVariant">
+                    <v-icon
+                        >mdi-{{
+                            `chevron-${miniVariant ? 'right' : 'left'}`
+                        }}</v-icon
+                    >
+                </v-btn>
+                <v-btn icon @click.stop="clipped = !clipped">
+                    <v-icon>mdi-application</v-icon>
+                </v-btn>
+            </template>
             <v-btn icon @click.stop="fixed = !fixed">
                 <v-icon>mdi-minus</v-icon>
             </v-btn>
@@ -79,9 +84,13 @@
                 </v-dialog>
             </template>
             <template v-else>
-                <GoogleLogin :params="params" :logoutButton="true"
+                <!-- <GoogleLogin
+                    :params="params"
+                    :logoutButton="true"
+                    @click="logOut()"
                     >Logout</GoogleLogin
-                >
+                > -->
+                <v-btn text @click="logOut()">Logout</v-btn>
             </template>
             <!-- <v-btn text color="blue lighten-3" class="hidden-sm-and-down"
                 >JOIN</v-btn
@@ -178,6 +187,15 @@ export default {
             console.log('Family Name: ' + profile.getFamilyName());
             console.log('Image URL: ' + profile.getImageUrl());
             console.log('Email: ' + profile.getEmail());
+
+            // use vuex to store user inforamtion
+            this.$store.dispatch('update_user_name', profile.getName());
+
+            // save login status in localstorage
+            localStorage.setItem('login', true);
+
+            // redirect to user page
+            this.$router.push('/user').catch(() => {});
         },
         onFailure() {
             console.log('failure....');
@@ -185,6 +203,12 @@ export default {
         },
         logIn() {
             this.dialog = true;
+        },
+        logOut() {
+            this.loggedIn = false;
+            localStorage.removeItem('login');
+            location.reload();
+            // this.$router.push('/login').catch(() => {});
         }
     },
     components: {
