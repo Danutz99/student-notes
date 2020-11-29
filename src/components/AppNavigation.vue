@@ -53,6 +53,7 @@
             <!-- <v-btn text class="hidden-sm-and-down">SIGN IN</v-btn> -->
             <GoogleLogin
                 :params="params"
+                :renderParams="renderParams"
                 :onSuccess="onSuccess"
                 :onFailure="onFailure"
                 >Login</GoogleLogin
@@ -125,6 +126,11 @@ export default {
             params: {
                 client_id:
                     '761938028069-n402gl1os21gh2ibre7sp858av4s02kf.apps.googleusercontent.com'
+            },
+            renderParams: {
+                width: 250,
+                height: 50,
+                longtitle: true
             }
         };
     },
