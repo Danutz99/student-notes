@@ -53,15 +53,30 @@
             <!-- <v-btn icon>
         <v-icon>mdi-menu</v-icon>
       </v-btn> -->
-            <!-- <v-btn text class="hidden-sm-and-down">SIGN IN</v-btn> -->
             <template v-if="!loggedIn">
-                <GoogleLogin
-                    :params="params"
-                    :renderParams="renderParams"
-                    :onSuccess="onSuccess"
-                    :onFailure="onFailure"
-                    >Login</GoogleLogin
+                <v-btn text class="hidden-sm-and-down" @click="logIn()"
+                    >LOG IN</v-btn
                 >
+            </template>
+            <template v-if="!loggedIn">
+                <v-dialog v-model="dialog" max-width="300">
+                    <v-row justify="center">
+                        <v-card height="300">
+                            <v-card-title class="headline">
+                                Sign in
+                            </v-card-title>
+                            <v-card-actions>
+                                <GoogleLogin
+                                    :params="params"
+                                    :renderParams="renderParams"
+                                    :onSuccess="onSuccess"
+                                    :onFailure="onFailure"
+                                    >Login</GoogleLogin
+                                >
+                            </v-card-actions>
+                        </v-card>
+                    </v-row>
+                </v-dialog>
             </template>
             <template v-else>
                 <GoogleLogin :params="params" :logoutButton="true"
@@ -144,7 +159,8 @@ export default {
                 longtitle: true
             },
             loggedIn: false,
-            googleUser: {}
+            googleUser: {},
+            dialog: false
         };
     },
     methods: {
@@ -155,6 +171,7 @@ export default {
             // This only gets the user information: id, name, imageUrl and email
             console.log(googleUser.getBasicProfile());
             let profile = googleUser.getBasicProfile();
+            this.dialog = false;
             console.log('ID: ' + profile.getId());
             console.log('Full Name: ' + profile.getName());
             console.log('Given Name: ' + profile.getGivenName());
@@ -164,6 +181,10 @@ export default {
         },
         onFailure() {
             console.log('failure....');
+            this.dialog = false;
+        },
+        logIn() {
+            this.dialog = true;
         }
     },
     components: {
