@@ -1,13 +1,17 @@
 <template>
     <v-container>
-        <v-btn text @click="load()">
-            <v-icon>mdi-plus</v-icon>
-            Add books and courses</v-btn
-        >
+        <template v-if="!loadCourses">
+            <v-btn text @click="load()">
+                <v-icon>mdi-plus</v-icon>
+                Add books and courses</v-btn
+            >
+        </template>
         <template v-if="loadCourses">
             <Courses />
         </template>
-        <Resources></Resources>
+        <template v-if="!loadCourses">
+            <Resources></Resources>
+        </template>
     </v-container>
 </template>
 <script>

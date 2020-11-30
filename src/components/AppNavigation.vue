@@ -27,7 +27,33 @@
                                     {{ item.title }}
                                 </v-expansion-panel-header>
                                 <v-expansion-panel-content>
-                                    {{ item.content }}
+                                    <template
+                                        v-if="
+                                            userCourses.length != 0 &&
+                                                item.title === 'Courses'
+                                        "
+                                    >
+                                        <v-list>
+                                            <v-list-item
+                                                v-for="(course,
+                                                i) in userCourses"
+                                                :key="i"
+                                            >
+                                                <v-list-item-content>
+                                                    <v-list-item-title
+                                                        v-text="
+                                                            course.CourseName +
+                                                                ' - ' +
+                                                                course.CourseTag
+                                                        "
+                                                    ></v-list-item-title>
+                                                </v-list-item-content>
+                                            </v-list-item>
+                                        </v-list>
+                                    </template>
+                                    <template v-else>
+                                        {{ item.content }}
+                                    </template>
                                 </v-expansion-panel-content>
                             </v-expansion-panel>
                         </v-expansion-panels>
@@ -124,6 +150,7 @@
 <script>
 import GoogleLogin from 'vue-google-login';
 import UserProfile from '../components/UserProfile.vue';
+import axios from 'axios';
 
 export default {
     name: 'AppNavigation',
@@ -169,7 +196,8 @@ export default {
             },
             loggedIn: false,
             googleUser: {},
-            dialog: false
+            dialog: false,
+            userCourses: []
         };
     },
     methods: {
@@ -189,13 +217,51 @@ export default {
             console.log('Email: ' + profile.getEmail());
 
             // use vuex to store user inforamtion
-            this.$store.dispatch('update_user_name', profile.getName());
+            this.$store.dispatch('updateUserInfo', profile.getId());
 
             // save login status in localstorage
             localStorage.setItem('login', true);
+            this.insertUserIfNotExists(profile);
 
             // redirect to user page
             this.$router.push('/user').catch(() => {});
+        },
+        async insertUserIfNotExists(user) {
+            let existingUser = null;
+            await axios
+                .get('http://localhost:8000/api/student' + '/' + user.getId())
+                .then(response => {
+                    existingUser = response.data;
+                })
+                .catch(e => {
+                    this.errors.push(e);
+                });
+            console.log('Existing user', existingUser);
+            if (existingUser === null)
+                axios({
+                    method: 'post',
+                    url: 'http://localhost:8000/api/student',
+                    data: {
+                        StudentId: user.getId(),
+                        StudentName: user.getName(),
+                        StudentEmail: user.getEmail()
+                    },
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+            this.getUserCourses();
+        },
+        getUserCourses() {
+            const userId = this.$store?.state?.userId;
+            axios
+                .get('http://localhost:8000/api/student/' + userId + '/courses')
+                .then(response => {
+                    return (this.userCourses = response.data.Courses);
+                })
+                .catch(e => {
+                    this.errors.push(e);
+                });
         },
         onFailure() {
             console.log('failure....');

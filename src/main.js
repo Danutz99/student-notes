@@ -12,16 +12,16 @@ Vue.use(Vuex);
 
 const store = new Vuex.Store({
     state: {
-        username: ''
+        userId: ''
     },
     mutations: {
-        username(state, name) {
-            state.username = name;
+        userInfo(state, id) {
+            state.userId = id;
         }
     },
     actions: {
-        update_user_name(store, name) {
-            store.commit('username', name);
+        updateUserInfo(store, id) {
+            store.commit('userInfo', id);
         }
     }
 });
