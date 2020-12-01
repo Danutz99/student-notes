@@ -37,6 +37,11 @@
                     </div>
                 </td>
             </template>
+            <template v-slot:item.action="{ item }">
+                <v-icon small @click="deleteNote(item)">
+                    mdi-delete
+                </v-icon>
+            </template>
         </v-data-table>
         <v-dialog v-model="addNotes">
             <v-row justify="center">
@@ -48,6 +53,10 @@
                         <v-container>
                             <v-row>
                                 <div class="container">
+                                    <v-text-field
+                                        v-model="newNoteTitle"
+                                        label="Title"
+                                    />
                                     <v-md-editor
                                         v-model="content"
                                         height="400px"
@@ -96,12 +105,19 @@ export default {
                     text: 'Id',
                     value: 'NoteId',
                     sortable: true
-                }
+                },
+                {
+                    text: 'Title',
+                    value: 'NoteTitle',
+                    sortable: true
+                },
+                { text: 'Action', value: 'action', sortable: false }
             ],
             notes: [],
             errors: [],
             addNotes: false,
-            content: '`Hello world!`'
+            content: '`Hello world!`',
+            newNoteTitle: ''
         };
     },
     mounted() {
@@ -146,10 +162,27 @@ export default {
                 method: 'post',
                 url: 'http://localhost:8000/api/note',
                 data: {
+                    NoteTitle: this.newNoteTitle,
                     NoteContent: content,
                     CourseId: this.course.CourseId,
                     StudentId: this.$store.state.userId
                 },
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            this.newNoteTitle = '';
+        },
+        deleteNote(note) {
+            axios({
+                method: 'delete',
+                url:
+                    'http://localhost:8000/api/student/' +
+                    this.$store.state.userId +
+                    '/course/' +
+                    this.course?.CourseId +
+                    '/note/' +
+                    note.NoteId,
                 headers: {
                     'Content-Type': 'application/json'
                 }

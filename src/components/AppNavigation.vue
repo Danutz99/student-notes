@@ -278,6 +278,7 @@ export default {
             // this.$router.push('/login').catch(() => {});
         },
         handleCourse(course) {
+            this.$store.dispatch('updateCurrentCourse', {});
             this.$store.dispatch('updateCurrentCourse', course);
         }
     },
