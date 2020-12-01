@@ -1,5 +1,9 @@
 <template>
     <div class="q-pa-md">
+        <v-btn text @click="addNotes = !addNotes">
+            <v-icon>mdi-plus</v-icon>
+            Add notes</v-btn
+        >
         <v-card-title>
             Your notes for {{ course.CourseName }}
             <v-spacer></v-spacer>
@@ -30,34 +34,42 @@
                             height="400px"
                             @save="save(notes.item)"
                         ></v-md-editor>
-                        <!-- <vue-simple-markdown :source="notes.item.NoteContent"></vue-simple-markdown> -->
                     </div>
-                    <!-- {{ notes.item.NoteContent }} -->
                 </td>
             </template>
         </v-data-table>
-        <!-- <v-dialog v-model="dialog" max-width="300">
+        <v-dialog v-model="addNotes">
             <v-row justify="center">
-                <v-card>
+                <v-card width="800">
                     <v-card-title class="headline">
-                        Add {{ selectedCourse.CourseName }} to my courses?
+                        Create new note for {{ course.CourseName }}
                     </v-card-title>
                     <v-card-actions>
-                        <v-spacer></v-spacer>
-                        <v-btn
-                            color="green darken-1"
-                            text
-                            @click="dialog = false"
-                        >
-                            No
-                        </v-btn>
-                        <v-btn color="green darken-1" text @click="addCourse()">
-                            Yes
-                        </v-btn>
+                        <v-container>
+                            <v-row>
+                                <div class="container">
+                                    <v-md-editor
+                                        v-model="content"
+                                        height="400px"
+                                        @save="addNote(content)"
+                                    ></v-md-editor>
+                                </div>
+                            </v-row>
+                            <v-spacer></v-spacer>
+                            <v-row>
+                                <v-btn
+                                    color="green darken-1"
+                                    text
+                                    @click="addNotes = false"
+                                >
+                                    Cancel
+                                </v-btn>
+                            </v-row>
+                        </v-container>
                     </v-card-actions>
                 </v-card>
             </v-row>
-        </v-dialog> -->
+        </v-dialog>
     </div>
 </template>
 
@@ -88,9 +100,8 @@ export default {
             ],
             notes: [],
             errors: [],
-            selectedCourse: {},
-            dialog: false,
-            source: '`Hello world!`'
+            addNotes: false,
+            content: '`Hello world!`'
         };
     },
     mounted() {
@@ -110,24 +121,6 @@ export default {
             });
     },
     methods: {
-        // onClick(course) {
-        //     this.selectedCourse = course;
-        //     this.dialog = true;
-        // },
-        // addCourse() {
-        //     axios({
-        //         method: 'post',
-        //         url: 'http://localhost:8000/api/courseStudent',
-        //         data: {
-        //             CourseId: this.selectedCourse.CourseId,
-        //             StudentId: this.$store.state.userId
-        //         },
-        //         headers: {
-        //             'Content-Type': 'application/json'
-        //         }
-        //     });
-        //     this.dialog = false;
-        // }
         save(note) {
             console.log('Saved note...', note.NoteContent);
             axios({
@@ -141,6 +134,21 @@ export default {
                     note.NoteId,
                 data: {
                     NoteContent: note.NoteContent
+                },
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+        },
+        addNote(content) {
+            this.addNotes = false;
+            axios({
+                method: 'post',
+                url: 'http://localhost:8000/api/note',
+                data: {
+                    NoteContent: content,
+                    CourseId: this.course.CourseId,
+                    StudentId: this.$store.state.userId
                 },
                 headers: {
                     'Content-Type': 'application/json'
