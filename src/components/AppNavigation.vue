@@ -38,6 +38,7 @@
                                                 v-for="(course,
                                                 i) in userCourses"
                                                 :key="i"
+                                                @click="handleCourse(course)"
                                             >
                                                 <v-list-item-content>
                                                     <v-list-item-title
@@ -275,6 +276,9 @@ export default {
             localStorage.removeItem('login');
             location.reload();
             // this.$router.push('/login').catch(() => {});
+        },
+        handleCourse(course) {
+            this.$store.dispatch('updateCurrentCourse', course);
         }
     },
     components: {
