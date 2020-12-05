@@ -278,8 +278,8 @@ export default {
             location.reload();
             // this.$router.push('/login').catch(() => {});
         },
-        handleCourse(course) {
-            this.$store.dispatch('updateCurrentCourse', {});
+        async handleCourse(course) {
+            await this.$store.dispatch('updateCurrentCourse', {});
             this.$store.dispatch('updateCurrentCourse', course);
         }
     },

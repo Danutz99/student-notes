@@ -38,7 +38,7 @@ export default {
     },
     data() {
         return {
-            loadCourses: false
+            loadCourses: false,
         };
     },
     computed: {
