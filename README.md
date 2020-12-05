@@ -29,7 +29,7 @@ The note editor should be easy to use so that the student can take notes during 
 
 - [ ] As a student I want the option to add attachments (images, documents) to the notes I take so that I can have more details about the subject
 
-- [ ] As a student I want to be able to organize notes based on classes, date, labels (tags) and keywords so that I can retrieve information easily 
+- [x] As a student I want to be able to organize notes based on classes, date, labels (tags) and keywords so that I can retrieve information easily 
 
 - [ ] As a student I want to be able to share notes with other colleagues 
 
