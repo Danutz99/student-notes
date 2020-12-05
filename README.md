@@ -22,10 +22,10 @@ The note editor should be easy to use so that the student can take notes during 
 # Minimal functionalities
 
 
-- [ ] As a student I want to be able to login with my institutional account (@stud.ase.ro) to manage my notes.
+- [x] As a student I want to be able to login with my institutional account (@stud.ase.ro) to manage my notes.
 
 
-- [ ] As a student I want to be able to view, add, edit and delete notes so that I can better organize information
+- [x] As a student I want to be able to view, add, edit and delete notes so that I can better organize information
 
 - [ ] As a student I want the option to add attachments (images, documents) to the notes I take so that I can have more details about the subject
 
