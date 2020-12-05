@@ -37,6 +37,29 @@
                     </div>
                 </td>
             </template>
+            <template v-slot:item.data-table-expand="{ expand, isExpanded }">
+                <v-col class="text-right">
+                    <v-btn
+                        v-if="!isExpanded"
+                        icon
+                        title="edit"
+                        @click="expand(!isExpanded)"
+                    >
+                        <v-icon>mdi-pencil</v-icon>
+                    </v-btn>
+                    <v-btn
+                        v-if="isExpanded"
+                        icon
+                        title="cancel"
+                        @click="expand(!isExpanded)"
+                    >
+                        <v-icon>mdi-close-circle</v-icon>
+                    </v-btn>
+                </v-col>
+            </template>
+            <template v-slot:item.NoteDate="{ item }">
+                <span>{{ dateConverter(item.NoteDate) }}</span>
+            </template>
             <template v-slot:item.action="{ item }">
                 <v-icon small @click="deleteNote(item)">
                     mdi-delete
@@ -111,6 +134,11 @@ export default {
                     value: 'NoteTitle',
                     sortable: true
                 },
+                {
+                    text: 'Date',
+                    value: 'NoteDate',
+                    sortable: true
+                },
                 { text: 'Action', value: 'action', sortable: false }
             ],
             notes: [],
@@ -121,20 +149,7 @@ export default {
         };
     },
     mounted() {
-        axios
-            .get(
-                'http://localhost:8000/api/student/' +
-                    this.$store.state.userId +
-                    '/course/' +
-                    this.course?.CourseId +
-                    '/notes'
-            )
-            .then(response => {
-                return (this.notes = response.data);
-            })
-            .catch(e => {
-                this.errors.push(e);
-            });
+        this.getNotes();
     },
     methods: {
         save(note) {
@@ -156,9 +171,9 @@ export default {
                 }
             });
         },
-        addNote(content) {
+        async addNote(content) {
             this.addNotes = false;
-            axios({
+            await axios({
                 method: 'post',
                 url: 'http://localhost:8000/api/note',
                 data: {
@@ -172,9 +187,26 @@ export default {
                 }
             });
             this.newNoteTitle = '';
+            this.getNotes();
         },
-        deleteNote(note) {
-            axios({
+        getNotes() {
+            axios
+                .get(
+                    'http://localhost:8000/api/student/' +
+                        this.$store.state.userId +
+                        '/course/' +
+                        this.course?.CourseId +
+                        '/notes'
+                )
+                .then(response => {
+                    return (this.notes = response.data);
+                })
+                .catch(e => {
+                    this.errors.push(e);
+                });
+        },
+        async deleteNote(note) {
+            await axios({
                 method: 'delete',
                 url:
                     'http://localhost:8000/api/student/' +
@@ -187,6 +219,10 @@ export default {
                     'Content-Type': 'application/json'
                 }
             });
+            this.getNotes();
+        },
+        dateConverter(date) {
+            return new String(date).replace('T', ' ').split('.')[0];
         }
     }
 };

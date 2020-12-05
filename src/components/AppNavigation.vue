@@ -21,6 +21,7 @@
                                 v-for="(item, index) in items"
                                 :key="index"
                                 :class="{ 'blue lighten-2': true }"
+                                @click="getUserCourses"
                             >
                                 <v-expansion-panel-header>
                                     <v-icon>{{ item.icon }}</v-icon>
@@ -251,7 +252,7 @@ export default {
                         'Content-Type': 'application/json'
                     }
                 });
-            this.getUserCourses();
+            // this.getUserCourses();
         },
         getUserCourses() {
             const userId = this.$store?.state?.userId;
