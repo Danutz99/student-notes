@@ -11,9 +11,24 @@
                 :clipped="clipped"
                 permanent
             >
-                <template>
-                    <UserProfile :user="googleUser" />
-                </template>
+                <v-row>
+                    <v-col>
+                        <template>
+                            <UserProfile :user="googleUser" />
+                        </template>
+                    </v-col>
+                </v-row>
+                <v-spacer></v-spacer>
+                <v-row>
+                    <v-col>
+                        <template>
+                            <v-btn text color="primary" @click="dashboardView">
+                                <v-icon>mdi-view-dashboard</v-icon>
+                                Dashboard
+                            </v-btn>
+                        </template>
+                    </v-col>
+                </v-row>
                 <v-list>
                     <template>
                         <v-expansion-panels accordion focusable>
@@ -281,6 +296,10 @@ export default {
         async handleCourse(course) {
             await this.$store.dispatch('updateCurrentCourse', {});
             this.$store.dispatch('updateCurrentCourse', course);
+        },
+        async dashboardView() {
+            await this.$store.dispatch('updateLoadCourses', false);
+            await this.$store.dispatch('updateCurrentCourse', {});
         }
     },
     components: {

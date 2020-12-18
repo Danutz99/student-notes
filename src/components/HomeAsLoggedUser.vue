@@ -6,16 +6,16 @@
                     getCurrentCourse.constructor === Object
             "
         >
-            <template v-if="!loadCourses">
-                <v-btn text @click="loadCourses = !loadCourses">
+            <template v-if="!getLoadCourses">
+                <v-btn text @click="setLoadCourses">
                     <v-icon>mdi-plus</v-icon>
                     Add books and courses</v-btn
                 >
             </template>
-            <template v-if="loadCourses">
+            <template v-if="getLoadCourses">
                 <Courses />
             </template>
-            <template v-if="!loadCourses">
+            <template v-if="!getLoadCourses">
                 <Resources></Resources>
             </template>
         </template>
@@ -37,18 +37,22 @@ export default {
         Notes
     },
     data() {
-        return {
-            loadCourses: false,
-        };
+        return {};
     },
     computed: {
         getCurrentCourse() {
             return this.$store?.state?.currentCourse;
+        },
+        getLoadCourses() {
+            return this.$store?.state?.loadCourses;
         }
     },
     methods: {
-        load() {
-            this.loadCourses = true;
+        async setLoadCourses() {
+            await this.$store.dispatch(
+                'updateLoadCourses',
+                !this.getLoadCourses
+            );
         }
     }
 };

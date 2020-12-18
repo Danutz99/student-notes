@@ -27,6 +27,8 @@ export default {
 .home {
     background: url('https://akm-img-a-in.tosshub.com/indiatoday/images/story/202003/learn-3653430_960_720.jpeg?Nlno_3vJQfw7GC0HrYJDiWNzrrTWSxGC&size=770:433');
     background-size: cover;
+    -webkit-text-stroke-width: 2px;
+    -webkit-text-stroke-color: black;
     width: 100%;
     height: 100%;
 }

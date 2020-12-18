@@ -26,7 +26,8 @@ Vue.use(VMdEditor);
 const store = new Vuex.Store({
     state: {
         userId: '',
-        currentCourse: {}
+        currentCourse: {},
+        loadCourses: false
     },
     mutations: {
         userInfo(state, id) {
@@ -34,6 +35,9 @@ const store = new Vuex.Store({
         },
         setCurrentCourse(state, course) {
             state.currentCourse = course;
+        },
+        setLoadCourses(state, loadCourses) {
+            state.loadCourses = loadCourses;
         }
     },
     actions: {
@@ -43,6 +47,9 @@ const store = new Vuex.Store({
 
         updateCurrentCourse(store, course) {
             store.commit('setCurrentCourse', course);
+        },
+        updateLoadCourses(store, loadCourses) {
+            store.commit('setLoadCourses', loadCourses);
         }
     }
 });
