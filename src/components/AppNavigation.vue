@@ -200,7 +200,12 @@ export default {
                     icon: 'mdi-timelapse',
                     content: 'No recent viewed resources.'
                 },
-                { title: 'Uploads', icon: 'mdi-upload', content: 'No uploads.' }
+                { title: 'Uploads', icon: 'mdi-upload', content: 'No uploads.' },
+                                {
+                    title: 'Study groups',
+                    icon: 'mdi-account-group-outline',
+                    content: 'Not in a study group.'
+                },
             ],
             params: {
                 client_id:

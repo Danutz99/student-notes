@@ -7,10 +7,19 @@
             "
         >
             <template v-if="!getLoadCourses">
+                <v-row>
                 <v-btn text @click="setLoadCourses">
                     <v-icon>mdi-plus</v-icon>
                     Add books and courses</v-btn
                 >
+                </v-row>
+                <v-spacer/>
+                <v-row>
+                <v-btn text>
+                    <v-icon>mdi-plus</v-icon>
+                    Create study group</v-btn
+                >
+                </v-row>
             </template>
             <template v-if="getLoadCourses">
                 <Courses />
