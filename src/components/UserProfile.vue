@@ -1,9 +1,9 @@
 <template>
     <div>
         <v-avatar size="40">
-            <img v-if="user.iK" alt="Avatar" :src="user.iK" />
+            <img v-if="user.fL" alt="Avatar" :src="user.fL" />
         </v-avatar>
-        <span>{{ user.Ad }}</span>
+        <span>{{ user.Ed }}</span>
     </div>
 </template>
 <script>
