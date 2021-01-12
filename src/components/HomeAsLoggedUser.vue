@@ -13,13 +13,6 @@
                         Add books and courses</v-btn
                     >
                 </v-row>
-                <v-spacer />
-                <v-row>
-                    <v-btn text>
-                        <v-icon>mdi-plus</v-icon>
-                        Create study group</v-btn
-                    >
-                </v-row>
             </template>
             <template v-if="getLoadCourses">
                 <Courses />
