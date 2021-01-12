@@ -36,7 +36,7 @@
                                 v-for="(item, index) in items"
                                 :key="index"
                                 :class="{ 'blue lighten-2': true }"
-                                @click="getUserCourses"
+                                @click="getUserData(item)"
                             >
                                 <v-expansion-panel-header>
                                     <v-icon>{{ item.icon }}</v-icon>
@@ -62,6 +62,28 @@
                                                             course.CourseName +
                                                                 ' - ' +
                                                                 course.CourseTag
+                                                        "
+                                                    ></v-list-item-title>
+                                                </v-list-item-content>
+                                            </v-list-item>
+                                        </v-list>
+                                    </template>
+                                    <template
+                                        v-else-if="
+                                            userStudyGroups.length != 0 &&
+                                                item.title === 'Study groups'
+                                        "
+                                    >
+                                        <v-list>
+                                            <v-list-item
+                                                v-for="(group,
+                                                i) in userStudyGroups"
+                                                :key="i"
+                                            >
+                                                <v-list-item-content>
+                                                    <v-list-item-title
+                                                        v-text="
+                                                            group.StudyGroupName
                                                         "
                                                     ></v-list-item-title>
                                                 </v-list-item-content>
@@ -200,12 +222,16 @@ export default {
                     icon: 'mdi-timelapse',
                     content: 'No recent viewed resources.'
                 },
-                { title: 'Uploads', icon: 'mdi-upload', content: 'No uploads.' },
-                                {
+                {
+                    title: 'Uploads',
+                    icon: 'mdi-upload',
+                    content: 'No uploads.'
+                },
+                {
                     title: 'Study groups',
                     icon: 'mdi-account-group-outline',
                     content: 'Not in a study group.'
-                },
+                }
             ],
             params: {
                 client_id:
@@ -219,7 +245,8 @@ export default {
             loggedIn: false,
             googleUser: {},
             dialog: false,
-            userCourses: []
+            userCourses: [],
+            userStudyGroups: []
         };
     },
     methods: {
@@ -285,6 +312,25 @@ export default {
                     this.errors.push(e);
                 });
         },
+        getUserStudyGroups() {
+            const userId = this.$store?.state?.userId;
+            axios
+                .get(
+                    'http://localhost:8000/api/student/' +
+                        userId +
+                        '/studyGroups'
+                )
+                .then(response => {
+                    return (this.userStudyGroups = response.data.StudyGroups);
+                })
+                .catch(e => {
+                    this.errors.push(e);
+                });
+        },
+        getUserData(item) {
+            if (item.title === 'Courses') this.getUserCourses();
+            else if (item.title === 'Study groups') this.getUserStudyGroups();
+        },
         onFailure() {
             console.log('failure....');
             this.dialog = false;
@@ -306,6 +352,10 @@ export default {
             await this.$store.dispatch('updateLoadCourses', false);
             await this.$store.dispatch('updateCurrentCourse', {});
         }
+        //         async handleGroup(group) {
+        //     await this.$store.dispatch('updateCurrentCourse', {});
+        //     this.$store.dispatch('updateCurrentCourse', course);
+        // },
     },
     components: {
         GoogleLogin,
