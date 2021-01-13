@@ -1,33 +1,36 @@
 <template>
     <div class="q-pa-md">
-        <v-row>
-            <v-btn text @click="addNotes = !addNotes">
-                <v-icon>mdi-plus</v-icon>
-                Add notes</v-btn
-            >
-        </v-row>
-
-        <v-spacer />
-        <template v-if="studyGroups.length === 0">
+        <template v-if="!viewGroups">
             <v-row>
-                <v-btn text>
+                <v-btn text @click="addNotes = !addNotes">
                     <v-icon>mdi-plus</v-icon>
-                    Create study group</v-btn
+                    Add notes</v-btn
                 >
             </v-row>
         </template>
-        <template v-else>
+
+        <v-spacer />
+        <v-row>
+            <template v-if="studyGroups.length === 0 || viewGroups">
+                <v-btn text @click="createStudyGroup = !createStudyGroup">
+                    <v-icon>mdi-plus</v-icon>
+                    Create study group</v-btn
+                >
+            </template>
+
+            <template v-else>
+                <v-btn text @click="viewGroups = !viewGroups">
+                    <v-icon>mdi-account-group-outline</v-icon>
+                    View study groups</v-btn
+                >
+            </template>
+        </v-row>
+        <template>
             <v-row>
                 <template v-if="viewGroups">
                     <v-btn text @click="viewGroups = !viewGroups">
                         <v-icon>mdi-close</v-icon>
                         Close</v-btn
-                    >
-                </template>
-                <template v-else>
-                    <v-btn text @click="viewGroups = !viewGroups">
-                        <v-icon>mdi-account-group-outline</v-icon>
-                        View study groups</v-btn
                     >
                 </template>
             </v-row>
@@ -99,7 +102,11 @@
             </v-data-table>
         </template>
         <template v-else>
-            <StudyGroups :studyGroups="studyGroups" :course="course" />
+            <StudyGroups
+                :studyGroups="studyGroups"
+                :course="course"
+                @onDelete="getCourseStudyGroups()"
+            />
         </template>
         <v-dialog v-model="addNotes">
             <v-row justify="center">
@@ -128,6 +135,50 @@
                                     color="green darken-1"
                                     text
                                     @click="addNotes = false"
+                                >
+                                    Cancel
+                                </v-btn>
+                            </v-row>
+                        </v-container>
+                    </v-card-actions>
+                </v-card>
+            </v-row>
+        </v-dialog>
+        <v-dialog v-model="createStudyGroup">
+            <v-row justify="center">
+                <v-card width="800">
+                    <v-card-title class="headline">
+                        Create new study group for {{ course.CourseName }}
+                    </v-card-title>
+                    <v-card-actions>
+                        <v-container>
+                            <v-row>
+                                <div class="container">
+                                    <v-text-field
+                                        v-model="studyGroupName"
+                                        label="Name"
+                                        clearable
+                                    />
+                                    <v-text-field
+                                        v-model="studyGroupDescription"
+                                        label="Description"
+                                        clearable
+                                    />
+                                </div>
+                            </v-row>
+                            <v-spacer></v-spacer>
+                            <v-row>
+                                <v-btn
+                                    color="green darken-1"
+                                    text
+                                    @click="createNewStudyGroup()"
+                                >
+                                    Create
+                                </v-btn>
+                                <v-btn
+                                    color="red darken-1"
+                                    text
+                                    @click="createStudyGroup = false"
                                 >
                                     Cancel
                                 </v-btn>
@@ -186,7 +237,10 @@ export default {
             content: '`Hello world!`',
             newNoteTitle: '',
             studyGroups: [],
-            viewGroups: false
+            viewGroups: false,
+            createStudyGroup: false,
+            studyGroupName: '',
+            studyGroupDescription: ''
         };
     },
     mounted() {
@@ -229,7 +283,44 @@ export default {
                 }
             });
             this.newNoteTitle = '';
-            this.getNotes();
+            this.getCourseStudyGroups();
+        },
+        async createNewStudyGroup() {
+            this.createStudyGroup = false;
+            let studyGroupId = null;
+            await axios({
+                method: 'post',
+                url: 'http://localhost:8000/api/studyGroups',
+                data: {
+                    StudyGroupName: this.studyGroupName,
+                    StudyGroupDescription: this.studyGroupDescription,
+                    CourseId: this.course.CourseId
+                },
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => {
+                    studyGroupId = response.data.StudyGroupId;
+                    console.log(response);
+                })
+                .catch(error => {
+                    console.log(error);
+                });
+            await axios({
+                method: 'post',
+                url: 'http://localhost:8000/api/studyGroupStudent',
+                data: {
+                    StudyGroupId: studyGroupId,
+                    StudentId: this.$store.state.userId
+                },
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            this.studyGroupName = '';
+            this.studyGroupDescription = '';
+            this.getCourseStudyGroups();
         },
         getNotes() {
             axios

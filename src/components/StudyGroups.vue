@@ -82,6 +82,11 @@
                         mdi-delete
                     </v-icon>
                 </template> -->
+            <template v-slot:item.delete="{ item }">
+                <v-icon small @click="deleteGroup(item)">
+                    mdi-delete
+                </v-icon>
+            </template>
         </v-data-table>
         <!-- </template> -->
         <!-- <v-dialog v-model="addNotes">
@@ -124,7 +129,7 @@
 </template>
 
 <script>
-// import axios from 'axios';
+import axios from 'axios';
 import StudyGroupStudents from '@/components/StudyGroupStudents';
 
 export default {
@@ -164,8 +169,8 @@ export default {
                     text: 'Description',
                     value: 'StudyGroupDescription',
                     sortable: true
-                }
-                // { text: 'Action', value: 'action', sortable: false }
+                },
+                { text: 'Delete', value: 'delete', sortable: false }
             ]
             // notes: [],
             // errors: [],
@@ -267,6 +272,18 @@ export default {
         // dateConverter(date) {
         //     return new String(date).replace('T', ' ').split('.')[0];
         // }
+        async deleteGroup(studyGroup) {
+            await axios({
+                method: 'delete',
+                url:
+                    'http://localhost:8000/api/studyGroup/' +
+                    studyGroup?.StudyGroupId,
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            this.$emit('onDelete');
+        }
     }
 };
 </script>
