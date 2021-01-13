@@ -252,7 +252,6 @@ export default {
     },
     methods: {
         save(note) {
-            console.log('Saved note...', note.NoteContent);
             axios({
                 method: 'put',
                 url:
@@ -305,7 +304,6 @@ export default {
             })
                 .then(response => {
                     studyGroupId = response.data.StudyGroupId;
-                    console.log(response);
                 })
                 .catch(error => {
                     console.log(error);

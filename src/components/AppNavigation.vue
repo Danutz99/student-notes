@@ -253,9 +253,7 @@ export default {
         onSuccess(googleUser) {
             this.loggedIn = true;
             this.googleUser = googleUser.getBasicProfile();
-            console.log(googleUser);
             // This only gets the user information: id, name, imageUrl and email
-            console.log(googleUser.getBasicProfile());
             let profile = googleUser.getBasicProfile();
             this.dialog = false;
             console.log('ID: ' + profile.getId());
@@ -285,7 +283,6 @@ export default {
                 .catch(e => {
                     this.errors.push(e);
                 });
-            console.log('Existing user', existingUser);
             if (existingUser === null)
                 axios({
                     method: 'post',
@@ -299,7 +296,6 @@ export default {
                         'Content-Type': 'application/json'
                     }
                 });
-            // this.getUserCourses();
         },
         getUserCourses() {
             const userId = this.$store?.state?.userId;
@@ -342,7 +338,6 @@ export default {
             this.loggedIn = false;
             localStorage.removeItem('login');
             location.reload();
-            // this.$router.push('/login').catch(() => {});
         },
         async handleCourse(course) {
             await this.$store.dispatch('updateCurrentCourse', {});
@@ -352,10 +347,6 @@ export default {
             await this.$store.dispatch('updateLoadCourses', false);
             await this.$store.dispatch('updateCurrentCourse', {});
         }
-        //         async handleGroup(group) {
-        //     await this.$store.dispatch('updateCurrentCourse', {});
-        //     this.$store.dispatch('updateCurrentCourse', course);
-        // },
     },
     components: {
         GoogleLogin,

@@ -23,11 +23,6 @@
             v-model="selectedStudents"
             show-select
         >
-            <!-- <template v-slot:item.remove="{ item }">
-                <v-icon small @click="removeStudent(item)">
-                    mdi-delete
-                </v-icon>
-            </template> -->
         </v-data-table>
         <div class="text-right">
             <template>
@@ -83,18 +78,15 @@ export default {
                     value: 'StudentEmail',
                     sortable: true
                 }
-                // {
-                //     text: 'Remove',
-                //     value: 'remove',
-                //     sortable: true
-                // }
             ],
             students: [],
-            selectedStudents: []
+            selectedStudents: [],
+            loggedInStudent: {}
         };
     },
     mounted() {
         this.getGroupExternalStudents();
+        this.getLoggedInStudent();
     },
     methods: {
         getGroupExternalStudents() {
@@ -114,13 +106,28 @@ export default {
         onCancel() {
             this.$emit('close');
         },
+        async getLoggedInStudent() {
+            await axios
+                .get(
+                    'http://localhost:8000/api/student/' +
+                        this.$store.state.userId
+                )
+                .then(response => {
+                    this.loggedInStudent = response.data;
+                })
+                .catch(e => {
+                    this.errors.push(e);
+                });
+        },
         onInvite() {
             this.$emit('close');
             this.selectedStudents = this.selectedStudents.map(x => {
                 return {
                     StudentId: x.StudentId,
                     InviterId: this.$store.state.userId,
-                    StudyGroupId: this.studyGroup?.StudyGroupId
+                    InviterName: this.loggedInStudent?.StudentName,
+                    StudyGroupId: this.studyGroup?.StudyGroupId,
+                    StudyGroupName: this.studyGroup?.StudyGroupName
                 };
             });
             axios({
@@ -132,20 +139,6 @@ export default {
                 }
             });
         }
-        // async removeStudent(student) {
-        //     await axios({
-        //         method: 'delete',
-        //         url:
-        //             'http://localhost:8000/api/studyGroup/' +
-        //             this.studyGroup?.StudyGroupId +
-        //             '/students/' +
-        //             student?.StudentId,
-        //         headers: {
-        //             'Content-Type': 'application/json'
-        //         }
-        //     });
-        //     this.getGroupStudents();
-        // }
     }
 };
 </script>

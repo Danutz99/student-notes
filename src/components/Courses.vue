@@ -22,11 +22,6 @@
             table-style="overflow-y:hidden;"
             @click:row="onClick"
         >
-            <!-- <template #expanded-item="courses">
-                <td :colspan="courses.headers.length">
-                    {{ courses.item }}
-                </td>
-            </template> -->
         </v-data-table>
         <v-dialog v-model="dialog" max-width="300">
             <v-row justify="center">
