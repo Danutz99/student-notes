@@ -33,18 +33,56 @@
                     mdi-delete
                 </v-icon>
             </template>
+            <template v-slot:item.invite="{ item }">
+                <v-icon small @click="inviteStudents(item)">
+                    mdi-account-multiple-plus-outline
+                </v-icon>
+            </template>
         </v-data-table>
+        <v-dialog v-model="externalStudents">
+            <v-row justify="center">
+                <v-card width="800">
+                    <v-card-title class="headline">
+                        Invite students to
+                        {{ selectedStudyGroup.StudyGroupName }}
+                    </v-card-title>
+                    <v-card-actions>
+                        <v-container>
+                            <v-row>
+                                <div class="container">
+                                    <StudentsNotInStudyGroup
+                                        :studyGroup="selectedStudyGroup"
+                                    />
+                                </div>
+                            </v-row>
+                            <v-spacer></v-spacer>
+                            <v-row>
+                                <v-btn
+                                    color="green darken-1"
+                                    text
+                                    @click="externalStudents = false"
+                                >
+                                    Cancel
+                                </v-btn>
+                            </v-row>
+                        </v-container>
+                    </v-card-actions>
+                </v-card>
+            </v-row>
+        </v-dialog>
     </div>
 </template>
 
 <script>
 import axios from 'axios';
 import StudyGroupStudents from '@/components/StudyGroupStudents';
+import StudentsNotInStudyGroup from '@/components/StudentsNotInStudyGroup';
 
 export default {
     name: 'StudyGroups',
     components: {
-        StudyGroupStudents
+        StudyGroupStudents,
+        StudentsNotInStudyGroup
     },
     props: {
         studyGroups: {
@@ -79,8 +117,11 @@ export default {
                     value: 'StudyGroupDescription',
                     sortable: true
                 },
-                { text: 'Delete', value: 'delete', sortable: false }
-            ]
+                { text: 'Delete', value: 'delete', sortable: false },
+                { text: 'Invite students', value: 'invite', sortable: false }
+            ],
+            externalStudents: false,
+            selectedStudyGroup: {}
         };
     },
     mounted() {},
@@ -96,6 +137,10 @@ export default {
                 }
             });
             this.$emit('onDelete');
+        },
+        inviteStudents(studyGroup) {
+            this.externalStudents = true;
+            this.selectedStudyGroup = studyGroup;
         }
     }
 };
