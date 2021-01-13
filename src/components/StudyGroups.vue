@@ -26,7 +26,8 @@
         </template> -->
         <!-- <template v-if="!viewGroups"> -->
         <v-card-title>
-            Your study groups for {{ course.CourseName }}
+            Your study groups for
+            {{ course.CourseName + ' - ' + course.CourseTag }}
             <v-spacer></v-spacer>
             <v-text-field
                 v-model="search"

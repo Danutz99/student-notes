@@ -37,7 +37,8 @@
         </template>
         <template v-if="!viewGroups">
             <v-card-title>
-                Your notes for {{ course.CourseName }}
+                Your notes for
+                {{ course.CourseName + ' - ' + course.CourseTag }}
                 <v-spacer></v-spacer>
                 <v-text-field
                     v-model="search"
@@ -112,7 +113,8 @@
             <v-row justify="center">
                 <v-card width="800">
                     <v-card-title class="headline">
-                        Create new note for {{ course.CourseName }}
+                        Create new note for
+                        {{ course.CourseName + ' - ' + course.CourseTag }}
                     </v-card-title>
                     <v-card-actions>
                         <v-container>
@@ -148,7 +150,8 @@
             <v-row justify="center">
                 <v-card width="800">
                     <v-card-title class="headline">
-                        Create new study group for {{ course.CourseName }}
+                        Create new study group for
+                        {{ course.CourseName + ' - ' + course.CourseTag }}
                     </v-card-title>
                     <v-card-actions>
                         <v-container>
