@@ -44,7 +44,7 @@
                 <v-card width="800">
                     <v-card-title class="headline">
                         Invite students to
-                        {{ selectedStudyGroup.StudyGroupName }}
+                        {{ selectedStudyGroup.StudyGroupName }} study group
                     </v-card-title>
                     <v-card-actions>
                         <v-container>
@@ -52,18 +52,9 @@
                                 <div class="container">
                                     <StudentsNotInStudyGroup
                                         :studyGroup="selectedStudyGroup"
+                                        @close="externalStudents = false"
                                     />
                                 </div>
-                            </v-row>
-                            <v-spacer></v-spacer>
-                            <v-row>
-                                <v-btn
-                                    color="green darken-1"
-                                    text
-                                    @click="externalStudents = false"
-                                >
-                                    Cancel
-                                </v-btn>
                             </v-row>
                         </v-container>
                     </v-card-actions>

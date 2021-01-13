@@ -20,6 +20,8 @@
             :options.sync="pagination"
             :rows-per-page-options="[300, 200, 100, 50, 10]"
             table-style="overflow-y:hidden;"
+            v-model="selected"
+            show-select
         >
             <!-- <template v-slot:item.remove="{ item }">
                 <v-icon small @click="removeStudent(item)">
@@ -27,6 +29,23 @@
                 </v-icon>
             </template> -->
         </v-data-table>
+        <div class="text-right">
+            <template>
+                <v-row>
+                    <v-col cols="10">
+                        <v-btn color="blue darken-1" text @click="onInvite">
+                            Invite
+                        </v-btn>
+                    </v-col>
+                    <v-spacer />
+                    <v-col class="text-right">
+                        <v-btn color="red darken-1" text @click="onCancel">
+                            Cancel
+                        </v-btn>
+                    </v-col>
+                </v-row>
+            </template>
+        </div>
     </div>
 </template>
 
@@ -70,7 +89,8 @@ export default {
                 //     sortable: true
                 // }
             ],
-            students: []
+            students: [],
+            selected: []
         };
     },
     mounted() {
@@ -90,6 +110,12 @@ export default {
                 .catch(e => {
                     this.errors.push(e);
                 });
+        },
+        onCancel() {
+            this.$emit('close');
+        },
+        onInvite() {
+            this.$emit('close');
         }
         // async removeStudent(student) {
         //     await axios({
