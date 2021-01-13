@@ -20,7 +20,7 @@
             :options.sync="pagination"
             :rows-per-page-options="[300, 200, 100, 50, 10]"
             table-style="overflow-y:hidden;"
-            v-model="selected"
+            v-model="selectedStudents"
             show-select
         >
             <!-- <template v-slot:item.remove="{ item }">
@@ -90,7 +90,7 @@ export default {
                 // }
             ],
             students: [],
-            selected: []
+            selectedStudents: []
         };
     },
     mounted() {
@@ -116,6 +116,21 @@ export default {
         },
         onInvite() {
             this.$emit('close');
+            this.selectedStudents = this.selectedStudents.map(x => {
+                return {
+                    StudentId: x.StudentId,
+                    InviterId: this.$store.state.userId,
+                    StudyGroupId: this.studyGroup?.StudyGroupId
+                };
+            });
+            axios({
+                method: 'post',
+                url: 'http://localhost:8000/api/invitation',
+                data: this.selectedStudents,
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
         }
         // async removeStudent(student) {
         //     await axios({
