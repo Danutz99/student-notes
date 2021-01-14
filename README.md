@@ -31,7 +31,7 @@ The note editor should be easy to use so that the student can take notes during 
 
 - [x] As a student I want to be able to organize notes based on classes, date, labels (tags) and keywords so that I can retrieve information easily 
 
-- [ ] As a student I want to be able to share notes with other colleagues 
+- [x] As a student I want to be able to share notes with other colleagues 
 
 - [ ] As a student I want to be able to integrate content from other sources and take notes (like for example while I listen to a youtube video, i read a book on kindle, attending an online conference)
 
