@@ -177,7 +177,7 @@
                             <v-spacer></v-spacer>
                             <v-row>
                                 <v-btn
-                                    color="green darken-1"
+                                    color="blue darken-1"
                                     text
                                     @click="createNewStudyGroup()"
                                 >
@@ -198,6 +198,43 @@
         </v-dialog>
         <v-dialog v-model="share">
             <v-row justify="center">
+                <v-card width="450">
+                    <v-card-title class="headline">
+                        Share with
+                    </v-card-title>
+                    <v-card-actions>
+                        <v-container>
+                            <v-row>
+                                <div class="container">
+                                    <v-btn
+                                        color="blue darken-1"
+                                        text
+                                        @click="
+                                            shareWithCourseCollegues = true;
+                                            share = false;
+                                        "
+                                    >
+                                        Your collegues
+                                    </v-btn>
+                                    <v-btn
+                                        color="blue darken-1"
+                                        text
+                                        @click="
+                                            shareWithCourseStudyGroups = true;
+                                            share = false;
+                                        "
+                                    >
+                                        Your study groups
+                                    </v-btn>
+                                </div>
+                            </v-row>
+                        </v-container>
+                    </v-card-actions>
+                </v-card>
+            </v-row>
+        </v-dialog>
+        <v-dialog v-model="shareWithCourseCollegues">
+            <v-row justify="center">
                 <v-card width="800">
                     <v-card-title class="headline">
                         Share
@@ -209,7 +246,33 @@
                                 <div class="container">
                                     <StudentsWithinCourse
                                         :note="noteToShare"
-                                        @close="share = false"
+                                        @close="
+                                            shareWithCourseCollegues = false
+                                        "
+                                    />
+                                </div>
+                            </v-row>
+                        </v-container>
+                    </v-card-actions>
+                </v-card>
+            </v-row>
+        </v-dialog>
+        <v-dialog v-model="shareWithCourseStudyGroups">
+            <v-row justify="center">
+                <v-card width="800">
+                    <v-card-title class="headline">
+                        Share
+                        {{ noteToShare.NoteTitle }} note
+                    </v-card-title>
+                    <v-card-actions>
+                        <v-container>
+                            <v-row>
+                                <div class="container">
+                                    <StudyGroupsWithinCourse
+                                        :note="noteToShare"
+                                        @close="
+                                            shareWithCourseStudyGroups = false
+                                        "
                                     />
                                 </div>
                             </v-row>
@@ -225,12 +288,14 @@
 import axios from 'axios';
 import StudyGroups from '@/components/StudyGroups';
 import StudentsWithinCourse from '@/components/StudentsWithinCourse';
+import StudyGroupsWithinCourse from '@/components/StudyGroupsWithinCourse';
 
 export default {
     name: 'Notes',
     components: {
         StudyGroups,
-        StudentsWithinCourse
+        StudentsWithinCourse,
+        StudyGroupsWithinCourse
     },
     props: {
         course: {
@@ -275,7 +340,9 @@ export default {
             studyGroupName: '',
             studyGroupDescription: '',
             noteToShare: {},
-            share: false
+            share: false,
+            shareWithCourseCollegues: false,
+            shareWithCourseStudyGroups: false
         };
     },
     mounted() {
