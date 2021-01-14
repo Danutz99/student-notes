@@ -35,7 +35,7 @@ The note editor should be easy to use so that the student can take notes during 
 
 - [ ] As a student I want to be able to integrate content from other sources and take notes (like for example while I listen to a youtube video, i read a book on kindle, attending an online conference)
 
-- [ ] As a student I want to be able to organize a study group. I can invite multiple colleagues that will share notes within the group
+- [x] As a student I want to be able to organize a study group. I can invite multiple colleagues that will share notes within the group
 # Examples
 StuDocu
 https://www.studocu.com/
