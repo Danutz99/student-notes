@@ -95,9 +95,14 @@
                 <template v-slot:item.NoteDate="{ item }">
                     <span>{{ dateConverter(item.NoteDate) }}</span>
                 </template>
-                <template v-slot:item.action="{ item }">
+                <template v-slot:item.remove="{ item }">
                     <v-icon small @click="deleteNote(item)">
                         mdi-delete
+                    </v-icon>
+                </template>
+                <template v-slot:item.share="{ item }">
+                    <v-icon small @click="shareNote(item)">
+                        mdi-share-variant-outline
                     </v-icon>
                 </template>
             </v-data-table>
@@ -191,17 +196,41 @@
                 </v-card>
             </v-row>
         </v-dialog>
+        <v-dialog v-model="share">
+            <v-row justify="center">
+                <v-card width="800">
+                    <v-card-title class="headline">
+                        Share
+                        {{ noteToShare.NoteTitle }} note
+                    </v-card-title>
+                    <v-card-actions>
+                        <v-container>
+                            <v-row>
+                                <div class="container">
+                                    <StudentsWithinCourse
+                                        :note="noteToShare"
+                                        @close="share = false"
+                                    />
+                                </div>
+                            </v-row>
+                        </v-container>
+                    </v-card-actions>
+                </v-card>
+            </v-row>
+        </v-dialog>
     </div>
 </template>
 
 <script>
 import axios from 'axios';
 import StudyGroups from '@/components/StudyGroups';
+import StudentsWithinCourse from '@/components/StudentsWithinCourse';
 
 export default {
     name: 'Notes',
     components: {
-        StudyGroups
+        StudyGroups,
+        StudentsWithinCourse
     },
     props: {
         course: {
@@ -232,7 +261,8 @@ export default {
                     value: 'NoteDate',
                     sortable: true
                 },
-                { text: 'Action', value: 'action', sortable: false }
+                { text: 'Remove', value: 'remove', sortable: false },
+                { text: 'Share', value: 'share', sortable: false }
             ],
             notes: [],
             errors: [],
@@ -243,7 +273,9 @@ export default {
             viewGroups: false,
             createStudyGroup: false,
             studyGroupName: '',
-            studyGroupDescription: ''
+            studyGroupDescription: '',
+            noteToShare: {},
+            share: false
         };
     },
     mounted() {
@@ -371,6 +403,10 @@ export default {
         },
         dateConverter(date) {
             return new String(date).replace('T', ' ').split('.')[0];
+        },
+        shareNote(note) {
+            this.noteToShare = note;
+            this.share = true;
         }
     }
 };

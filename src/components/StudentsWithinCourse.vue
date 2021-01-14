@@ -28,8 +28,8 @@
             <template>
                 <v-row>
                     <v-col cols="10">
-                        <v-btn color="blue darken-1" text @click="onInvite">
-                            Invite
+                        <v-btn color="blue darken-1" text @click="onShare">
+                            Share
                         </v-btn>
                     </v-col>
                     <v-spacer />
@@ -48,9 +48,9 @@
 import axios from 'axios';
 
 export default {
-    name: 'StudentsNotInStudyGroup',
+    name: 'StudentsWithinCourse',
     props: {
-        studyGroup: {
+        note: {
             type: Object,
             required: true
         }
@@ -80,24 +80,24 @@ export default {
                 }
             ],
             students: [],
-            selectedStudents: [],
-            loggedInStudent: {}
+            selectedStudents: []
         };
     },
     mounted() {
-        this.getGroupExternalStudents();
-        this.getLoggedInStudent();
+        this.getStudentsWithinCourse();
     },
     methods: {
-        getGroupExternalStudents() {
+        getStudentsWithinCourse() {
             axios
                 .get(
-                    'http://localhost:8000/api/studyGroup/' +
-                        +this.studyGroup?.StudyGroupId +
-                        '/students/external'
+                    'http://localhost:8000/api/course/' +
+                        +this.note?.CourseId +
+                        '/students'
                 )
                 .then(response => {
-                    return (this.students = response.data);
+                    return (this.students = response.data?.Students.filter(
+                        x => x.StudentId !== this.$store.state.userId
+                    ));
                 })
                 .catch(e => {
                     this.errors.push(e);
@@ -107,34 +107,20 @@ export default {
             this.$emit('close');
             this.selectedStudents = [];
         },
-        async getLoggedInStudent() {
-            await axios
-                .get(
-                    'http://localhost:8000/api/student/' +
-                        this.$store.state.userId
-                )
-                .then(response => {
-                    this.loggedInStudent = response.data;
-                })
-                .catch(e => {
-                    this.errors.push(e);
-                });
-        },
-        onInvite() {
+        onShare() {
             this.$emit('close');
-            let invitations = this.selectedStudents.map(x => {
+            let notesToShare = this.selectedStudents.map(x => {
                 return {
+                    NoteTitle: this.note?.NoteTitle,
+                    NoteContent: this.note?.NoteContent,
                     StudentId: x.StudentId,
-                    InviterId: this.$store.state.userId,
-                    InviterName: this.loggedInStudent?.StudentName,
-                    StudyGroupId: this.studyGroup?.StudyGroupId,
-                    StudyGroupName: this.studyGroup?.StudyGroupName
+                    CourseId: this.note?.CourseId
                 };
             });
             axios({
                 method: 'post',
-                url: 'http://localhost:8000/api/invitation',
-                data: invitations,
+                url: 'http://localhost:8000/api/notes',
+                data: notesToShare,
                 headers: {
                     'Content-Type': 'application/json'
                 }
