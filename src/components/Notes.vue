@@ -65,7 +65,9 @@
                             <v-md-editor
                                 v-model="notes.item.NoteContent"
                                 height="400px"
+                                :disabled-menus="[]"
                                 @save="save(notes.item)"
+                                @upload-image="handleUploadImage"
                             ></v-md-editor>
                         </div>
                     </td>
@@ -132,6 +134,8 @@
                                     <v-md-editor
                                         v-model="content"
                                         height="400px"
+                                        :disabled-menus="[]"
+                                        @upload-image="handleUploadImage"
                                         @save="addNote(content)"
                                     ></v-md-editor>
                                 </div>
@@ -475,6 +479,14 @@ export default {
         shareNote(note) {
             this.noteToShare = note;
             this.share = true;
+        },
+        async handleUploadImage(event, insertImage, files) {
+            insertImage({
+                url: require('C:/Users/Danut/Pictures/' + files[0].name),
+                desc: 'desc'
+                // width: 'auto',
+                // height: 'auto',
+            });
         }
     }
 };
