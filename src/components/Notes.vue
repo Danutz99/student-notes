@@ -385,6 +385,7 @@ export default {
             });
             this.newNoteTitle = '';
             this.getCourseStudyGroups();
+            this.getNotes();
         },
         async createNewStudyGroup() {
             this.createStudyGroup = false;

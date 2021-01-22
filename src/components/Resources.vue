@@ -15,7 +15,10 @@
                         <v-container fill-height fluid>
                             <v-layout fill-height>
                                 <v-flex xs12 align-end flexbox>
-                                    <span class="headline blue--text"
+                                    <span
+                                        class="headline blue--text"
+                                        style="-webkit-text-stroke-width: 2px;
+    -webkit-text-stroke-color: black;"
                                         >WEB TEHNOLOGIES</span
                                     >
                                 </v-flex>
@@ -49,7 +52,10 @@
                         <v-container fill-height fluid>
                             <v-layout fill-height>
                                 <v-flex xs12 align-end flexbox>
-                                    <span class="headline blue--text"
+                                    <span
+                                        class="headline blue--text"
+                                        style="-webkit-text-stroke-width: 2px;
+    -webkit-text-stroke-color: black;"
                                         >MULTIMEDIA</span
                                     >
                                 </v-flex>
@@ -84,7 +90,10 @@
                         <v-container fill-height fluid>
                             <v-layout fill-height>
                                 <v-flex xs12 align-end flexbox>
-                                    <span class="headline blue--text"
+                                    <span
+                                        class="headline blue--text"
+                                        style="-webkit-text-stroke-width: 2px;
+    -webkit-text-stroke-color: black;"
                                         >ANDROID</span
                                     >
                                 </v-flex>
