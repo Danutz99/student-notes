@@ -541,8 +541,34 @@ export default {
                 this.deleteUploadedFile(fileRecord);
             }
         },
-        uploadFiles(item) {
-            console.log(item);
+        async uploadFiles(note) {
+            const toBinaryString = file =>
+                new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.readAsBinaryString(file);
+                    reader.onload = () => resolve(reader.result);
+                    reader.onerror = error => reject(error);
+                });
+            const file = this.fileRecords[0].file;
+            const attachmentContent = await toBinaryString(file);
+            console.log(attachmentContent);
+            await axios({
+                method: 'post',
+                url: 'http://localhost:8000/api/note/attachment',
+                data: {
+                    AttachmentContent: attachmentContent,
+                    AttachmentName: file.name,
+                    AttachmentType: file.type,
+                    AttachmentSize: file.size,
+                    NoteId: note.NoteId,
+                    StudentId: note.StudentId,
+                    CourseId: note.CourseId
+                },
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            console.log(note);
             this.choseFiles = !this.choseFiles;
             console.log(this.fileRecords[0]);
             this.fileRecords = [];
