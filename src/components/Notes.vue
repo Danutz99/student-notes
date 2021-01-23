@@ -62,6 +62,8 @@
                 <template #expanded-item="notes">
                     <td :colspan="notes.headers.length">
                         <div class="container">
+                            <v-row>
+                                <v-col class="text-right">
                             <template v-if="!viewAttachments">
                                 <v-btn
                                     text
@@ -77,13 +79,15 @@
                                 <v-btn
                                     text
                                     color="blue"
-                                    @click="viewAttachments = !viewAttachments"
+                                    @click="viewAttachments = !viewAttachments;"
                                 >
                                     <v-icon>mdi-close-circle</v-icon>
 
                                     Close attachments</v-btn
                                 >
                             </template>
+                                </v-col>
+                            </v-row>
                             <v-spacer />
                             <v-row>
                                 <v-col>
@@ -106,6 +110,7 @@
                                         >
                                             <v-expansion-panel-header>
                                                 {{ attachment.AttachmentName }}
+                                                <v-icon @click="removeAttachment(attachment)">mdi-delete</v-icon>
                                             </v-expansion-panel-header>
                                             <v-expansion-panel-content>
                                                 <pdf
@@ -446,7 +451,8 @@ export default {
             choseFiles: false,
             editorViewMode: 'editable',
             viewAttachments: false,
-            attachments: []
+            attachments: [],
+            currentNote: {}
         };
     },
     mounted() {
@@ -642,6 +648,7 @@ export default {
             this.fileRecords = [];
         },
         async getNoteAttachments(note) {
+            this.currentNote = note;
             await axios
                 .get(
                     'http://localhost:8000/api/note/' +
@@ -654,7 +661,20 @@ export default {
                 .catch(e => {
                     this.errors.push(e);
                 });
+        },
+        async removeAttachment(attachment){
+            await axios({
+                method: 'delete',
+                url:
+                    'http://localhost:8000/api/attachment/' +
+                        attachment.AttachmentId,
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            await this.getNoteAttachments(this.currentNote);
         }
+
     }
 };
 </script>
