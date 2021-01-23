@@ -107,6 +107,32 @@
                         mdi-share-variant-outline
                     </v-icon>
                 </template>
+                <template v-slot:item.attachment="{ item }">
+                    <template v-if="!choseFiles">
+                        <v-icon small @click="choseFiles = !choseFiles">
+                            mdi-attachment
+                        </v-icon>
+                    </template>
+                    <template v-else>
+                        <v-icon small left @click="choseFiles = !choseFiles"
+                            >mdi-close</v-icon
+                        >
+                        <VueFileAgent
+                            v-model="fileRecords"
+                            :accept="'.pdf'"
+                            :deletable="true"
+                            :multiple="false"
+                            @beforedelete="onBeforeDelete($event)"
+                            @delete="fileDeleted($event)"
+                        ></VueFileAgent>
+                        <button
+                            :disabled="!fileRecords.length"
+                            @click="uploadFiles(item)"
+                        >
+                            Upload {{ fileRecords.length }} files
+                        </button>
+                    </template>
+                </template>
             </v-data-table>
         </template>
         <template v-else>
@@ -331,7 +357,8 @@ export default {
                     sortable: true
                 },
                 { text: 'Remove', value: 'remove', sortable: false },
-                { text: 'Share', value: 'share', sortable: false }
+                { text: 'Share', value: 'share', sortable: false },
+                { text: 'Add attachment', value: 'attachment', sortable: false }
             ],
             notes: [],
             errors: [],
@@ -346,7 +373,9 @@ export default {
             noteToShare: {},
             share: false,
             shareWithCourseCollegues: false,
-            shareWithCourseStudyGroups: false
+            shareWithCourseStudyGroups: false,
+            fileRecords: [],
+            choseFiles: false
         };
     },
     mounted() {
@@ -480,13 +509,43 @@ export default {
             this.noteToShare = note;
             this.share = true;
         },
-        async handleUploadImage(event, insertImage, files) {
+        handleUploadImage(event, insertImage, files) {
             insertImage({
                 url: require('C:/Users/Danut/Pictures/' + files[0].name),
                 desc: 'desc'
                 // width: 'auto',
                 // height: 'auto',
             });
+        },
+        onBeforeDelete(fileRecord) {
+            var i = this.fileRecords.indexOf(fileRecord);
+            if (i !== -1) {
+                // queued file, not yet uploaded. Just remove from the arrays
+                this.fileRecords.splice(i, 1);
+                var k = this.fileRecords.indexOf(fileRecord);
+                if (k !== -1) this.fileRecords.splice(k, 1);
+            } else {
+                if (confirm('Are you sure you want to delete?')) {
+                    this.$refs.vueFileAgent.deleteFileRecord(fileRecord); // will trigger 'delete' event
+                }
+            }
+        },
+        deleteUploadedFile(fileRecord) {
+            this.$refs.vueFileAgent.deleteUpload(fileRecord);
+        },
+        fileDeleted(fileRecord) {
+            var i = this.fileRecords.indexOf(fileRecord);
+            if (i !== -1) {
+                this.fileRecords.splice(i, 1);
+            } else {
+                this.deleteUploadedFile(fileRecord);
+            }
+        },
+        uploadFiles(item) {
+            console.log(item);
+            this.choseFiles = !this.choseFiles;
+            console.log(this.fileRecords[0]);
+            this.fileRecords = [];
         }
     }
 };

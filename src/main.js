@@ -14,6 +14,12 @@ import 'vue-simple-markdown/dist/vue-simple-markdown.css';
 
 import enUS from '@kangc/v-md-editor/lib/lang/en-US';
 
+import VueFileAgent from 'vue-file-agent';
+import VueFileAgentStyles from 'vue-file-agent/dist/vue-file-agent.css';
+
+Vue.use(VueFileAgent);
+Vue.use(VueFileAgentStyles);
+
 VMdEditor.lang.use('en-US', enUS);
 
 Vue.use(VueSimpleMarkdown);
