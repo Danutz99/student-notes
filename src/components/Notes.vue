@@ -64,28 +64,58 @@
                         <div class="container">
                             <v-row>
                                 <v-col class="text-right">
-                            <template v-if="!viewAttachments">
-                                <v-btn
-                                    text
-                                    color="blue"
-                                    @click="
-                                        getNoteAttachments(notes.item);
-                                        viewAttachments = !viewAttachments;
-                                    "
-                                    >View attachments</v-btn
-                                >
-                            </template>
-                            <template v-else>
-                                <v-btn
-                                    text
-                                    color="blue"
-                                    @click="viewAttachments = !viewAttachments;"
-                                >
-                                    <v-icon>mdi-close-circle</v-icon>
+                                    <template v-if="!viewAttachments">
+                                        <v-btn
+                                            text
+                                            color="blue"
+                                            @click="
+                                                getNoteAttachments(notes.item);
+                                                viewAttachments = !viewAttachments;
+                                            "
+                                            >View attachments</v-btn
+                                        >
+                                    </template>
+                                    <template v-else>
+                                        <v-btn
+                                            text
+                                            color="blue"
+                                            @click="
+                                                viewAttachments = !viewAttachments
+                                            "
+                                        >
+                                            <v-icon>mdi-close-circle</v-icon>
 
-                                    Close attachments</v-btn
-                                >
-                            </template>
+                                            Close attachments</v-btn
+                                        >
+                                    </template>
+                                </v-col>
+                            </v-row>
+                            <v-spacer />
+                            <v-row>
+                                <v-col class="text-right">
+                                    <template v-if="!openResources">
+                                        <v-btn
+                                            text
+                                            color="blue"
+                                            @click="
+                                                openResources = !openResources
+                                            "
+                                            >Open Resources</v-btn
+                                        >
+                                    </template>
+                                    <template v-else>
+                                        <v-btn
+                                            text
+                                            color="blue"
+                                            @click="
+                                                openResources = !openResources
+                                            "
+                                        >
+                                            <v-icon>mdi-close-circle</v-icon>
+
+                                            Close resources</v-btn
+                                        >
+                                    </template>
                                 </v-col>
                             </v-row>
                             <v-spacer />
@@ -110,7 +140,14 @@
                                         >
                                             <v-expansion-panel-header>
                                                 {{ attachment.AttachmentName }}
-                                                <v-icon @click="removeAttachment(attachment)">mdi-delete</v-icon>
+                                                <v-icon
+                                                    @click="
+                                                        removeAttachment(
+                                                            attachment
+                                                        )
+                                                    "
+                                                    >mdi-delete</v-icon
+                                                >
                                             </v-expansion-panel-header>
                                             <v-expansion-panel-content>
                                                 <pdf
@@ -121,6 +158,15 @@
                                             </v-expansion-panel-content>
                                         </v-expansion-panel>
                                     </v-expansion-panels>
+                                </v-col>
+                                <v-col v-if="openResources">
+                                    <iframe
+                                        class="embed-responsive-item"
+                                        src="https://www.youtube.com/embed/rbzxxbuk3sk"
+                                        width="100%"
+                                        height="100%"
+                                        frameborder="0"
+                                    ></iframe>
                                 </v-col>
                             </v-row>
                         </div>
@@ -391,6 +437,7 @@ import StudyGroups from '@/components/StudyGroups';
 import StudentsWithinCourse from '@/components/StudentsWithinCourse';
 import StudyGroupsWithinCourse from '@/components/StudyGroupsWithinCourse';
 import pdf from 'vue-pdf';
+// import VueFriendlyIframe from 'vue-friendly-iframe';
 
 export default {
     name: 'Notes',
@@ -399,6 +446,7 @@ export default {
         StudentsWithinCourse,
         StudyGroupsWithinCourse,
         pdf
+        // VueFriendlyIframe
     },
     props: {
         course: {
@@ -452,7 +500,8 @@ export default {
             editorViewMode: 'editable',
             viewAttachments: false,
             attachments: [],
-            currentNote: {}
+            currentNote: {},
+            openResources: false
         };
     },
     mounted() {
@@ -662,19 +711,18 @@ export default {
                     this.errors.push(e);
                 });
         },
-        async removeAttachment(attachment){
+        async removeAttachment(attachment) {
             await axios({
                 method: 'delete',
                 url:
                     'http://localhost:8000/api/attachment/' +
-                        attachment.AttachmentId,
+                    attachment.AttachmentId,
                 headers: {
                     'Content-Type': 'application/json'
                 }
             });
             await this.getNoteAttachments(this.currentNote);
         }
-
     }
 };
 </script>
