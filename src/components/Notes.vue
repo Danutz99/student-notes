@@ -62,37 +62,104 @@
                 <template #expanded-item="notes">
                     <td :colspan="notes.headers.length">
                         <div class="container">
-                            <v-md-editor
-                                v-model="notes.item.NoteContent"
-                                height="400px"
-                                :disabled-menus="[]"
-                                @save="save(notes.item)"
-                                @upload-image="handleUploadImage"
-                            ></v-md-editor>
+                            <template v-if="!viewAttachments">
+                                <v-btn
+                                    text
+                                    color="blue"
+                                    @click="
+                                        getNoteAttachments(notes.item);
+                                        viewAttachments = !viewAttachments;
+                                    "
+                                    >View attachments</v-btn
+                                >
+                            </template>
+                            <template v-else>
+                                <v-btn
+                                    text
+                                    color="blue"
+                                    @click="viewAttachments = !viewAttachments"
+                                >
+                                    <v-icon>mdi-close-circle</v-icon>
+
+                                    Close attachments</v-btn
+                                >
+                            </template>
+                            <v-spacer />
+                            <v-row>
+                                <v-col>
+                                    <v-md-editor
+                                        v-model="notes.item.NoteContent"
+                                        height="400px"
+                                        :disabled-menus="[]"
+                                        :mode="editorViewMode"
+                                        @save="save(notes.item)"
+                                        @upload-image="handleUploadImage"
+                                    ></v-md-editor>
+                                </v-col>
+                                <v-col v-if="viewAttachments">
+                                    <v-expansion-panels accordion focusable>
+                                        <v-expansion-panel
+                                            v-for="(attachment,
+                                            index) in attachments"
+                                            :key="index"
+                                            :class="{ 'white lighten-2': true }"
+                                        >
+                                            <v-expansion-panel-header>
+                                                {{ attachment.AttachmentName }}
+                                            </v-expansion-panel-header>
+                                            <v-expansion-panel-content>
+                                                <pdf
+                                                    :src="
+                                                        attachment.AttachmentContent
+                                                    "
+                                                ></pdf>
+                                            </v-expansion-panel-content>
+                                        </v-expansion-panel>
+                                    </v-expansion-panels>
+                                </v-col>
+                            </v-row>
                         </div>
                     </td>
                 </template>
                 <template
                     v-slot:item.data-table-expand="{ expand, isExpanded }"
                 >
-                    <v-col class="text-right">
-                        <v-btn
-                            v-if="!isExpanded"
-                            icon
-                            title="edit"
-                            @click="expand(!isExpanded)"
-                        >
-                            <v-icon>mdi-pencil</v-icon>
-                        </v-btn>
-                        <v-btn
-                            v-if="isExpanded"
-                            icon
-                            title="cancel"
-                            @click="expand(!isExpanded)"
-                        >
-                            <v-icon>mdi-close-circle</v-icon>
-                        </v-btn>
-                    </v-col>
+                    <v-row>
+                        <v-col>
+                            <v-btn
+                                v-if="!isExpanded"
+                                icon
+                                title="edit"
+                                @click="expand(!isExpanded)"
+                            >
+                                <v-icon>mdi-pencil</v-icon>
+                            </v-btn>
+                            <v-btn
+                                v-if="isExpanded"
+                                icon
+                                title="cancel"
+                                @click="
+                                    expand(!isExpanded);
+                                    editorViewMode = 'editable';
+                                "
+                            >
+                                <v-icon>mdi-close-circle</v-icon>
+                            </v-btn>
+                        </v-col>
+                        <v-col>
+                            <v-btn
+                                v-if="!isExpanded"
+                                icon
+                                title="view"
+                                @click="
+                                    expand(!isExpanded);
+                                    editorViewMode = 'preview';
+                                "
+                            >
+                                <v-icon>mdi-file-eye-outline</v-icon>
+                            </v-btn>
+                        </v-col>
+                    </v-row>
                 </template>
                 <template v-slot:item.NoteDate="{ item }">
                     <span>{{ dateConverter(item.NoteDate) }}</span>
@@ -313,19 +380,20 @@
         </v-dialog>
     </div>
 </template>
-
 <script>
 import axios from 'axios';
 import StudyGroups from '@/components/StudyGroups';
 import StudentsWithinCourse from '@/components/StudentsWithinCourse';
 import StudyGroupsWithinCourse from '@/components/StudyGroupsWithinCourse';
+import pdf from 'vue-pdf';
 
 export default {
     name: 'Notes',
     components: {
         StudyGroups,
         StudentsWithinCourse,
-        StudyGroupsWithinCourse
+        StudyGroupsWithinCourse,
+        pdf
     },
     props: {
         course: {
@@ -375,7 +443,10 @@ export default {
             shareWithCourseCollegues: false,
             shareWithCourseStudyGroups: false,
             fileRecords: [],
-            choseFiles: false
+            choseFiles: false,
+            editorViewMode: 'editable',
+            viewAttachments: false,
+            attachments: []
         };
     },
     mounted() {
@@ -542,16 +613,15 @@ export default {
             }
         },
         async uploadFiles(note) {
-            const toBinaryString = file =>
+            const toBase64 = file =>
                 new Promise((resolve, reject) => {
                     const reader = new FileReader();
-                    reader.readAsBinaryString(file);
+                    reader.readAsDataURL(file);
                     reader.onload = () => resolve(reader.result);
                     reader.onerror = error => reject(error);
                 });
             const file = this.fileRecords[0].file;
-            const attachmentContent = await toBinaryString(file);
-            console.log(attachmentContent);
+            const attachmentContent = await toBase64(file);
             await axios({
                 method: 'post',
                 url: 'http://localhost:8000/api/note/attachment',
@@ -568,10 +638,22 @@ export default {
                     'Content-Type': 'application/json'
                 }
             });
-            console.log(note);
             this.choseFiles = !this.choseFiles;
-            console.log(this.fileRecords[0]);
             this.fileRecords = [];
+        },
+        async getNoteAttachments(note) {
+            await axios
+                .get(
+                    'http://localhost:8000/api/note/' +
+                        note.NoteId +
+                        '/attachments'
+                )
+                .then(response => {
+                    return (this.attachments = response.data);
+                })
+                .catch(e => {
+                    this.errors.push(e);
+                });
         }
     }
 };
