@@ -33,7 +33,7 @@ The note editor should be easy to use so that the student can take notes during 
 
 - [x] As a student I want to be able to share notes with other colleagues 
 
-- [ ] As a student I want to be able to integrate content from other sources and take notes (like for example while I listen to a youtube video, i read a book on kindle, attending an online conference)
+- [x] As a student I want to be able to integrate content from other sources and take notes (like for example while I listen to a youtube video, i read a book on kindle, attending an online conference)
 
 - [x] As a student I want to be able to organize a study group. I can invite multiple colleagues that will share notes within the group
 # Examples
